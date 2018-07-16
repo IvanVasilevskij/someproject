@@ -13,6 +13,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class parser{
+
+    public static void main(String[] args) {
+        Formatter resultData = new Formatter();
+        Document page = getPage();
+        assert page != null;
+        Element widgetExchange = page.select("div[id=widget_exchange]").first();
+        Element dayInfo = widgetExchange.select("tr").first();
+        String actualDate = parseDayFtomString(dayInfo.text()); //получаем актуальную дату с сайта
+        Elements exchangeRateInfo = widgetExchange.select("div[class=w_data_wrap");
+        String dollarRateInfo = parseDollarExchangeFtomString(exchangeRateInfo.text());
+
+        resultData.format("%-9s %s %-10s %s %s", "date:", actualDate, "\ndollar:", dollarRateInfo, "rub");
+        System.out.println(resultData);
+    }
+
     private static Document getPage() {
         String url = "http://www.cbr.ru/";
         try {
@@ -37,19 +52,5 @@ public class parser{
         if (matcher.find()) {
             return matcher.group();
         } else return null;
-    }
-
-    public static void main(String[] args) {
-        Document page = getPage();
-        assert page != null;
-        Element widgetExchange = page.select("div[id=widget_exchange]").first();
-        Element dayInfo = widgetExchange.select("tr").first();
-        String actualDate = parseDayFtomString(dayInfo.text()); //получаем актуальную дату с сайта
-        Elements exchangeRateInfo = widgetExchange.select("div[class=w_data_wrap");
-        String dollarRateInfo = parseDollarExchangeFtomString(exchangeRateInfo.text());
-
-        Formatter resultData = new Formatter();
-        resultData.format("%s %20s %s %11s %s", "date:", actualDate, "\ndollarRate:", dollarRateInfo, "rub");
-        System.out.println(resultData);
     }
 }
